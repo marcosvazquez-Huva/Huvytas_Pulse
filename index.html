@@ -6,39 +6,27 @@
     <title>Huvytas Pulse | Campaign Monitor</title>
     <style>
         body, html { 
-            margin: 0; padding: 0; height: 100%; width: 100%;
-            overflow: hidden; background-color: #8CC63F; 
-        }
-        .container {
-            position: relative;
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
             width: 100%;
-            height: 100vh;
+            overflow: hidden; 
+            background-color: #8CC63F; /* Color verde de tu marca */
         }
+        /* Este truco oculta la barra inferior de Power BI estirando el iframe */
         iframe { 
             width: 100%; 
-            height: 100%; 
+            height: calc(100% + 36px); 
+            margin-bottom: -36px;
             border: none; 
             display: block;
-        }
-        /* Este bloque tapa la barra de Power BI sin mover el reporte */
-        .blocker {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 36px;
-            background-color: #8CC63F; /* Mismo verde de tu marca */
-            z-index: 999;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <iframe 
-            src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&navContentPaneEnabled=false" 
-            allowFullScreen="true">
-        </iframe>
-        <div class="blocker"></div>
-    </div>
+    <iframe 
+        src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=1996e452a40b509ae954&navContentPaneEnabled=false" 
+        allowFullScreen="true">
+    </iframe>
 </body>
-</html>
+</html> 
