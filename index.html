@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Huvytas Pulse | Acceso Clientes</title>
+    <title>Huvytas Pulse | Customer Access</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -86,8 +86,8 @@
         <div class="login-card">
             <h2>Huvytas Pulse</h2>
             <p>Turning Metrics into Results</p>
-            <input type="email" id="email" placeholder="Correo electrónico">
-            <input type="password" id="password" placeholder="Contraseña">
+            <input type="email" id="email" placeholder="User">
+            <input type="password" id="password" placeholder="Password">
             <button id="btn-login" onclick="login()">Login</button>
         </div>
     </div>
@@ -125,13 +125,13 @@
             const pass = document.getElementById('password').value;
 
             if(!email || !pass) {
-                alert("Por favor, completa todos los campos.");
+                alert("Please complete all fields.");
                 return;
             }
 
             auth.signInWithEmailAndPassword(email, pass)
                 .catch(error => {
-                    alert("Acceso denegado. Verifica tu correo y contraseña.");
+                    alert("Please verify your email and password.");
                     console.error(error);
                 });
         }
