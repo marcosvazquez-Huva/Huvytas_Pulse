@@ -10,23 +10,72 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0e0e0e; color: #fff; height: 100vh; display: flex; flex-direction: column; }
+        
+        /* 1. Fondo con imagen fija home.jpg */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-image: url('home.jpeg'); /* Asegúrate de que home.jpg esté en la misma carpeta */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Fija la imagen para que no haga scroll */
+            color: #fff; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
         
         /* Contenedor de Login */
-        #auth-container { flex: 1; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); }
-        .login-card { background: #ffffff; color: #333; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 400px; }
-        .login-card h2 { margin-bottom: 10px; color: #000; font-size: 24px; }
-        .login-card p { margin-bottom: 25px; color: #666; font-size: 14px; }
+        #auth-container { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            /* Quitamos el degradado para que se vea la imagen de fondo */
+            background: rgba(0, 0, 0, 0.5); /* Añade una capa oscura ligera para contrastar la tarjeta */
+        }
         
-        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
-        button#btn-login { width: 100%; padding: 15px; background-color: #000; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: 0.3s; }
-        button#btn-login:hover { background-color: #333; }
+        .login-card { 
+            background: #ffffff; 
+            color: #333; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            text-align: center; 
+            width: 100%; 
+            max-width: 400px; 
+        }
+        
+        .login-card h2 { margin-bottom: 5px; color: #000; font-size: 28px; font-weight: 700; }
+        
+        /* 2. Subtítulo actualizado: Turning Metrics into Results */
+        .login-card p { margin-bottom: 25px; color: #555; font-size: 15px; font-style: italic; }
+        
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; color: #333; background-color: #f9f9f9; }
+        input:focus { border-color: #88C24E; outline: none; box-shadow: 0 0 5px rgba(136, 194, 78, 0.5); }
+
+        /* 3. Botón actualizado: Texto "Login" y color verde #88C24E */
+        button#btn-login { 
+            width: 100%; 
+            padding: 15px; 
+            background-color: #88C24E; /* Verde Huvytas */
+            color: #fff; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 700; 
+            text-transform: uppercase; /* Texto en mayúsculas para más fuerza */
+            letter-spacing: 1px;
+            transition: 0.3s background-color; 
+        }
+        button#btn-login:hover { background-color: #6da33c; /* Un verde un poco más oscuro al pasar el mouse */ }
 
         /* Contenedor del Reporte */
-        #dashboard-container { display: none; height: 100vh; flex-direction: column; }
-        .nav-bar { background: #000; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; }
+        #dashboard-container { display: none; height: 100vh; flex-direction: column; background-color: #000; }
+        .nav-bar { background: #000; padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; color: #fff; }
         .nav-bar span { font-weight: bold; letter-spacing: 1px; }
-        .btn-logout { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        .btn-logout { background: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: bold; }
+        .btn-logout:hover { background-color: #ff1a1a; }
         
         iframe { width: 100%; flex: 1; border: none; }
     </style>
@@ -36,10 +85,10 @@
     <div id="auth-container">
         <div class="login-card">
             <h2>Huvytas Pulse</h2>
-            <p>Portal de Reportes Publicitarios</p>
+            <p>Turning Metrics into Results</p>
             <input type="email" id="email" placeholder="Correo electrónico">
             <input type="password" id="password" placeholder="Contraseña">
-            <button id="btn-login" onclick="login()">Iniciar Sesión</button>
+            <button id="btn-login" onclick="login()">Login</button>
         </div>
     </div>
 
@@ -100,9 +149,16 @@
             if (user) {
                 authDiv.style.display = 'none';
                 dashDiv.style.display = 'flex';
+                // Cambiamos el fondo para que el reporte se vea limpio
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = '#000';
             } else {
                 authDiv.style.display = 'flex';
                 dashDiv.style.display = 'none';
+                // Restauramos el fondo de imagen al cerrar sesión
+                document.body.style.backgroundImage = "url('home.jpg')";
+                document.body.style.backgroundSize = 'cover';
+                
                 // Limpiar campos al cerrar sesión
                 document.getElementById('email').value = "";
                 document.getElementById('password').value = "";
