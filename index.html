@@ -56,7 +56,7 @@
         }
         button#btn-login:hover { background-color: #6da33c; }
 
-        /* SECCIÓN DEL REPORTE - RECORTE DE BARRAS */
+        /* RECORTE AGRESIVO PARA OCULTAR BARRAS DE POWER BI */
         #dashboard-container { 
             display: none; 
             height: 100vh; 
@@ -70,7 +70,7 @@
             background: #000; padding: 10px 20px; display: flex; 
             justify-content: space-between; align-items: center; 
             border-bottom: 1px solid #333; color: #fff; 
-            z-index: 10;
+            z-index: 100; /* Asegura que la barra negra siempre esté arriba */
         }
         
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
@@ -80,19 +80,19 @@
             flex: 1; 
             width: 100%; 
             position: relative; 
-            overflow: hidden; /* Esto corta lo que se sale del contenedor */
+            overflow: hidden; /* Corta todo lo que se asome por debajo de los límites del contenedor */
         }
         
         iframe { 
             width: 100%; 
-            /* Aumentamos la altura para empujar la barra de zoom fuera del área visible */
-            height: calc(100% + 56px); 
+            /* Aumentamos la altura considerablemente para enterrar todas las barras blancas */
+            height: calc(100% + 90px); 
             border: none; 
             position: absolute; 
             top: 0; 
             left: 0; 
-            /* Desplazamiento negativo para ocultar el excedente inferior */
-            margin-bottom: -56px; 
+            /* Empujamos el margen hacia abajo para que el wrapper haga el corte */
+            margin-bottom: -90px; 
         }
     </style>
 </head>
