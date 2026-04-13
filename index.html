@@ -56,43 +56,42 @@
         }
         button#btn-login:hover { background-color: #6da33c; }
 
-        /* RECORTE AGRESIVO PARA OCULTAR BARRAS DE POWER BI */
+        /* AJUSTE PARA OCULTAR LA BARRA DE POWER BI */
         #dashboard-container { 
             display: none; 
             height: 100vh; 
             width: 100vw; 
             flex-direction: column; 
             background-color: #000; 
-            overflow: hidden; 
+            overflow: hidden; /* Importante para que el recorte funcione */
         }
         
         .nav-bar { 
             background: #000; padding: 10px 20px; display: flex; 
             justify-content: space-between; align-items: center; 
             border-bottom: 1px solid #333; color: #fff; 
-            z-index: 100; /* Asegura que la barra negra siempre esté arriba */
+            z-index: 10;
         }
         
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
+        /* El truco del recorte: el iframe es un poco más alto que su contenedor */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
             position: relative; 
-            overflow: hidden; /* Corta todo lo que se asome por debajo de los límites del contenedor */
+            overflow: hidden; 
         }
         
         iframe { 
             width: 100%; 
-            /* Aumentamos la altura considerablemente para enterrar todas las barras blancas */
-            height: calc(100% + 90px); 
+            height: calc(100% + 36px); /* Le damos más altura para "empujar" la barra hacia abajo */
             border: none; 
             position: absolute; 
             top: 0; 
             left: 0; 
-            /* Empujamos el margen hacia abajo para que el wrapper haga el corte */
-            margin-bottom: -90px; 
+            margin-bottom: -36px; /* Escondemos la parte sobrante */
         }
     </style>
 </head>
@@ -116,7 +115,8 @@
         <div class="iframe-wrapper">
             <iframe 
                 id="powerbi-frame"
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=true" 
+                /* URL con parámetros de limpieza */
+                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false" 
                 allowFullScreen="true">
             </iframe>
         </div>
