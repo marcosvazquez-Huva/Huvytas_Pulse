@@ -64,7 +64,6 @@
             width: 100vw; 
             flex-direction: column; 
             background-color: #000; 
-            overflow: hidden; 
         }
         
         .nav-bar { 
@@ -77,24 +76,17 @@
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
+        /* DISEÑO SIMPLE Y NATIVO */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
-            position: relative; 
             overflow: hidden; 
         }
         
-        /* AJUSTE TÉCNICO DE RECORTE INFERIOR */
         iframe { 
             width: 100%; 
-            /* Aumentamos la altura un poco más para asegurar que la barra blanca se 'entierre' */
-            height: calc(100% + 45px); 
+            height: 100%; /* Sin recortes, 100% nativo */
             border: none; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            /* Desplazamos el final hacia abajo del límite visual */
-            margin-bottom: -45px; 
         }
     </style>
 </head>
@@ -126,7 +118,7 @@
         <div class="iframe-wrapper">
             <iframe 
                 id="powerbi-frame"
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=true" 
+                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8" 
                 allowFullScreen="true">
             </iframe>
         </div>
@@ -163,7 +155,7 @@
         let inactivityTimer;
         function resetTimer() {
             clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); // 30 min
+            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); 
         }
 
         function logoutDueToInactivity() {
