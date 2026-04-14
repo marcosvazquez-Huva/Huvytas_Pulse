@@ -64,6 +64,7 @@
             width: 100vw; 
             flex-direction: column; 
             background-color: #000; 
+            overflow: hidden; 
         }
         
         .nav-bar { 
@@ -76,17 +77,24 @@
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* DISEÑO SIMPLE Y NATIVO */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
-            overflow: hidden; 
+            position: relative; 
+            overflow: hidden; /* Importante para que el recorte funcione */
         }
         
+        /* AJUSTE TÉCNICO DE RECORTE INFERIOR */
         iframe { 
             width: 100%; 
-            height: 100%; /* Sin recortes, 100% nativo */
+            /* Aumentamos la altura exactamente 56px para empujar la barra inferior hacia abajo */
+            height: calc(100% + 56px); 
             border: none; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            /* Desplazamiento negativo para ocultar el excedente inferior */
+            margin-bottom: -56px; 
         }
     </style>
 </head>
@@ -118,7 +126,8 @@
         <div class="iframe-wrapper">
             <iframe 
                 id="powerbi-frame"
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8" 
+                /* URL limpia para asegurar compatibilidad */
+                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false" 
                 allowFullScreen="true">
             </iframe>
         </div>
@@ -155,7 +164,7 @@
         let inactivityTimer;
         function resetTimer() {
             clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); 
+            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); // 30 min
         }
 
         function logoutDueToInactivity() {
