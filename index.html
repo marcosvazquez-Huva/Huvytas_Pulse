@@ -157,7 +157,7 @@
 
         function resetTimer() {
             clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(logoutDueToInactivity, 3600000); // 1 hora
+            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); // 30 minutos
         }
 
         function logoutDueToInactivity() {
