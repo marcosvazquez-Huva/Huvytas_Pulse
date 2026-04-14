@@ -56,27 +56,25 @@
         }
         button#btn-login:hover { background-color: #6da33c; }
 
-        /* AJUSTE PARA OCULTAR LA BARRA DE POWER BI */
         #dashboard-container { 
             display: none; 
             height: 100vh; 
             width: 100vw; 
             flex-direction: column; 
             background-color: #000; 
-            overflow: hidden; /* Importante para que el recorte funcione */
+            overflow: hidden; 
         }
         
         .nav-bar { 
             background: #000; padding: 10px 20px; display: flex; 
             justify-content: space-between; align-items: center; 
             border-bottom: 1px solid #333; color: #fff; 
-            z-index: 10;
+            z-index: 100;
         }
         
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* El truco del recorte: el iframe es un poco más alto que su contenedor */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
@@ -86,12 +84,12 @@
         
         iframe { 
             width: 100%; 
-            height: calc(100% + 36px); /* Le damos más altura para "empujar" la barra hacia abajo */
+            height: calc(100% + 90px); /* Recorte profundo para ocultar menús de Power BI */
             border: none; 
             position: absolute; 
             top: 0; 
             left: 0; 
-            margin-bottom: -36px; /* Escondemos la parte sobrante */
+            margin-bottom: -90px; 
         }
     </style>
 </head>
@@ -115,8 +113,7 @@
         <div class="iframe-wrapper">
             <iframe 
                 id="powerbi-frame"
-                /* URL con parámetros de limpieza */
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false" 
+                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false&chromeless=true" 
                 allowFullScreen="true">
             </iframe>
         </div>
@@ -135,31 +132,65 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        // 1. LOGIN CON PERSISTENCIA DE SESIÓN
         function login() {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
+            
             if(!email || !pass) { alert("Please complete all fields."); return; }
-            auth.signInWithEmailAndPassword(email, pass).catch(error => {
-                alert("Please verify your email and password.");
-            });
+
+            auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
+                .then(() => {
+                    return auth.signInWithEmailAndPassword(email, pass);
+                })
+                .catch(error => {
+                    alert("Please verify your email and password.");
+                });
         }
 
-        function logout() { auth.signOut(); }
+        function logout() { 
+            auth.signOut(); 
+        }
+
+        // 2. CONTROL DE INACTIVIDAD (1 HORA)
+        let inactivityTimer;
+
+        function resetTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(logoutDueToInactivity, 3600000); // 1 hora
+        }
+
+        function logoutDueToInactivity() {
+            if (auth.currentUser) {
+                alert("Session closed due to inactivity.");
+                logout();
+            }
+        }
+
+        // Eventos para resetear el reloj de inactividad
+        window.onmousemove = resetTimer;
+        window.onmousedown = resetTimer; 
+        window.onclick = resetTimer;     
+        window.onkeypress = resetTimer;   
+        window.scroll = resetTimer;
 
         auth.onAuthStateChanged(user => {
             const authDiv = document.getElementById('auth-container');
             const dashDiv = document.getElementById('dashboard-container');
+            
             if (user) {
                 authDiv.style.display = 'none';
                 dashDiv.style.display = 'flex';
                 document.body.style.backgroundImage = 'none';
                 document.body.style.backgroundColor = '#000';
+                resetTimer(); // Iniciar reloj al entrar
             } else {
                 authDiv.style.display = 'flex';
                 dashDiv.style.display = 'none';
                 document.body.style.backgroundImage = "url('home.jpg')";
                 document.getElementById('email').value = "";
                 document.getElementById('password').value = "";
+                clearTimeout(inactivityTimer); // Detener reloj al salir
             }
         });
     </script>
