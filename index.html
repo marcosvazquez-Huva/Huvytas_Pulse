@@ -9,6 +9,8 @@
     
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -77,7 +79,6 @@
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
-        /* CONTENEDOR RESPONSIVO MEJORADO */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
@@ -85,26 +86,15 @@
             overflow: hidden;
         }
         
-        iframe { 
-            width: 100%; 
-            height: calc(100% + 56px); 
-            border: none; 
+        /* El SDK inyectará el iframe aquí, mantenemos tu recorte de barra inferior */
+        .iframe-wrapper iframe { 
+            width: 100% !important; 
+            height: calc(100% + 56px) !important; 
+            border: none !important; 
             position: absolute; 
             top: 0; 
             left: 0; 
             margin-bottom: -56px; 
-        }
-
-        /* AJUSTE ESPECÍFICO PARA MÓVILES (Pantallas menores a 768px) */
-        @media (max-width: 768px) {
-            .iframe-wrapper {
-                height: 100%; /* Asegura que tome el alto total disponible */
-            }
-            iframe {
-                /* En móvil eliminamos el offset de 56px si causa problemas de scroll, 
-                   o lo mantenemos si quieres seguir ocultando la barra inferior */
-                height: calc(100% + 56px); 
-            }
         }
     </style>
 </head>
@@ -121,8 +111,8 @@
             <div style="margin-top: 25px; font-size: 11px; color: #999; border-top: 1px solid #eee; padding-top: 15px;">
                 <p>© 2026 Huvytas Advertising. All rights reserved.</p>
                 <p style="margin-top: 5px;">
-                    <a href="javascript:void(0)" onclick="alert('Privacy Policy: All data processed through Huvytas Pulse is used strictly for advertising performance analysis. We do not share client metrics with third parties.')" style="color: #88C24E; text-decoration: none; font-weight: bold;">Privacy Policy</a> | 
-                    <a href="javascript:void(0)" onclick="alert('Terms of Service: Access to this portal is restricted to authorized Huvytas Advertising clients. Unauthorized use or distribution of these reports is prohibited.')" style="color: #88C24E; text-decoration: none; font-weight: bold;">Terms of Service</a>
+                    <a href="javascript:void(0)" onclick="alert('Privacy Policy: ...')" style="color: #88C24E; text-decoration: none; font-weight: bold;">Privacy Policy</a> | 
+                    <a href="javascript:void(0)" onclick="alert('Terms of Service: ...')" style="color: #88C24E; text-decoration: none; font-weight: bold;">Terms of Service</a>
                 </p>
             </div>
         </div>
@@ -133,14 +123,8 @@
             <span>HUVYTASPULSE</span>
             <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
         </div>
-        <div class="iframe-wrapper">
-            <iframe 
-                id="powerbi-frame"
-                /* URL con parámetros de optimización móvil añadidos */
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false&mobileVisuals=true&appBarReadOnly=true" 
-                allowFullScreen="true">
-            </iframe>
-        </div>
+        <div class="iframe-wrapper" id="reportContainer">
+            </div>
     </div>
 
     <script>
@@ -160,35 +144,32 @@
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             if(!email || !pass) { alert("Please complete all fields."); return; }
-            auth.setPersistence(firebase.auth.Auth.Persistence.SESSION)
-                .then(() => {
-                    return auth.signInWithEmailAndPassword(email, pass);
-                })
-                .catch(error => {
-                    alert("Please verify your email and password.");
-                });
+            auth.signInWithEmailAndPassword(email, pass).catch(error => alert("Error de acceso."));
         }
 
-        function logout() { auth.signOut(); }
+        function logout() { auth.signOut(); location.reload(); }
 
-        let inactivityTimer;
-        function resetTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(logoutDueToInactivity, 1800000); // 30 min
+        // --- LÓGICA DE EMBEBIDO INTELIGENTE ---
+        function loadPowerBI() {
+            const models = window['powerbi-client'].models;
+            const container = document.getElementById('reportContainer');
+            
+            // Detectar si la pantalla es de móvil (< 768px)
+            const isMobile = window.innerWidth < 768;
+
+            const config = {
+                type: 'report',
+                embedUrl: "https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9",
+                settings: {
+                    navContentPaneEnabled: false,
+                    filterPaneEnabled: false,
+                    // FORZAR EL DISEÑO MÓVIL SI ES NECESARIO
+                    layoutType: isMobile ? models.LayoutType.MobilePortrait : models.LayoutType.Master
+                }
+            };
+
+            powerbi.embed(container, config);
         }
-
-        function logoutDueToInactivity() {
-            if (auth.currentUser) {
-                alert("Session closed due to inactivity.");
-                logout();
-            }
-        }
-
-        window.onmousemove = resetTimer;
-        window.onmousedown = resetTimer; 
-        window.onclick = resetTimer;     
-        window.onkeypress = resetTimer;   
-        window.scroll = resetTimer;
 
         auth.onAuthStateChanged(user => {
             const authDiv = document.getElementById('auth-container');
@@ -198,14 +179,10 @@
                 dashDiv.style.display = 'flex';
                 document.body.style.backgroundImage = 'none';
                 document.body.style.backgroundColor = '#000';
-                resetTimer();
+                loadPowerBI(); // Llamar a la función al iniciar sesión
             } else {
                 authDiv.style.display = 'flex';
                 dashDiv.style.display = 'none';
-                document.body.style.backgroundImage = "url('home.jpg')";
-                document.getElementById('email').value = "";
-                document.getElementById('password').value = "";
-                clearTimeout(inactivityTimer);
             }
         });
     </script>
