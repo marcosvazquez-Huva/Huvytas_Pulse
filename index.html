@@ -77,24 +77,34 @@
         .nav-bar span { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
         .btn-logout { background: #ff4d4d; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
         
+        /* CONTENEDOR RESPONSIVO MEJORADO */
         .iframe-wrapper { 
             flex: 1; 
             width: 100%; 
             position: relative; 
-            overflow: hidden; /* Importante para que el recorte funcione */
+            overflow: hidden;
         }
         
-        /* AJUSTE TÉCNICO DE RECORTE INFERIOR */
         iframe { 
             width: 100%; 
-            /* Aumentamos la altura exactamente 56px para empujar la barra inferior hacia abajo */
             height: calc(100% + 56px); 
             border: none; 
             position: absolute; 
             top: 0; 
             left: 0; 
-            /* Desplazamiento negativo para ocultar el excedente inferior */
             margin-bottom: -56px; 
+        }
+
+        /* AJUSTE ESPECÍFICO PARA MÓVILES (Pantallas menores a 768px) */
+        @media (max-width: 768px) {
+            .iframe-wrapper {
+                height: 100%; /* Asegura que tome el alto total disponible */
+            }
+            iframe {
+                /* En móvil eliminamos el offset de 56px si causa problemas de scroll, 
+                   o lo mantenemos si quieres seguir ocultando la barra inferior */
+                height: calc(100% + 56px); 
+            }
         }
     </style>
 </head>
@@ -126,8 +136,8 @@
         <div class="iframe-wrapper">
             <iframe 
                 id="powerbi-frame"
-                /* URL limpia para asegurar compatibilidad */
-                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false" 
+                /* URL con parámetros de optimización móvil añadidos */
+                src="https://app.powerbi.com/view?r=eyJrIjoiYTBiMWUzNjMtZjNhMi00Nzg0LTkyNGEtMTI2NGE1YzQyZmFkIiwidCI6IjFlM2E0ZjcxLWQxMmUtNGM0Yy05NmQ4LTI2MDNiZDY1MmUzNSJ9&pageName=558a467bceb79caaaed8&navContentPaneEnabled=false&filterPaneEnabled=false&mobileVisuals=true&appBarReadOnly=true" 
                 allowFullScreen="true">
             </iframe>
         </div>
